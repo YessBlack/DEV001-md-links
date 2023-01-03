@@ -1,7 +1,8 @@
 const figlet = require('figlet');
 const chalk = require('chalk');
+const { message } = require('./helpers');
 
-const log = console.log;
+const { log } = console;
 
 const welcome = () => {
   log(
@@ -22,6 +23,8 @@ const welcome = () => {
   log(chalk.green('3. Si deseas obtener estadísticas de los links, agrega la opción --stats.'));
   log('');
   log(chalk.green('4. Si deseas obtener estadísticas de los links y validarlos, agrega las opciones --stats y --validate.'));
+  log('');
+  log(message('Ejemplo: md-links ./some/example.md --validate --stats', 'cyan'));
   log('');
 };
 
