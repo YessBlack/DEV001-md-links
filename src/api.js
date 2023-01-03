@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 
+const validateOptions = (options) => options === '--validate' || options === '--stats';
+
 const message = (text, color) => chalk.keyword(color)(text);
 
 const formatPath = (route) => route.replace(/\\/g, '/');
