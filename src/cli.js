@@ -12,7 +12,7 @@ const {
   filterMd,
   readMd,
   getLinks,
-} = require('./helpers.js');
+} = require('./api.js');
 
 const mdLinks = (route, options) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);

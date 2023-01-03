@@ -1,6 +1,6 @@
 const figlet = require('figlet');
 const chalk = require('chalk');
-const { message } = require('./helpers');
+const { message } = require('./api');
 
 const { log } = console;
 
