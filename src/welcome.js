@@ -11,7 +11,7 @@ const welcome = () => {
     ),
   );
   log('');
-  log(chalk.bold.blue('.:.:.:. Herramienta para validar links de archivos .md .:.:.:.'));
+  log(chalk.bold.blue('.:.:.:. Herramienta para validar links de archivos Markdown .:.:.:.'));
   log();
   log('');
   log(chalk.bgRed('Para comenzar a usar md-links, ten en cuenta las siguientes instrucciones:'));
