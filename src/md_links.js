@@ -5,8 +5,7 @@ const {
   validatePath,
   isAbsolute,
   convertToAbsolute,
-  isDirectory,
-  isFile,
+  statDirectory,
   readDirectory,
   mdExt,
   filterMd,
@@ -17,7 +16,7 @@ const mdLinks = (route, options) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
 
   if (validatePath(absolutePath)) {
-    if (isDirectory(absolutePath)) {
+    if (statDirectory(absolutePath)) {
       const filesMd = filterMd(readDirectory(absolutePath));
       filesMd.forEach((file) => {
         const pathFile = formatPath(`${absolutePath}/${file}`);
@@ -30,7 +29,7 @@ const mdLinks = (route, options) => {
             }
           });
       });
-    } else if (isFile(absolutePath)) {
+    } else if (absolutePath) {
       // eslint-disable-next-line no-unused-expressions
       mdExt(absolutePath)
         ? log(console.log(getLinks(absolutePath)))

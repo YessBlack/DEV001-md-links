@@ -12,9 +12,7 @@ const isAbsolute = (route) => path.isAbsolute(route);
 
 const convertToAbsolute = (route) => path.resolve(route);
 
-const isDirectory = (route) => fs.statSync(route).isDirectory();
-
-const isFile = (route) => fs.statSync(route).isFile();
+const statDirectory = (route) => fs.statSync(route).isDirectory();
 
 const readDirectory = (route) => fs.readdirSync(route);
 
@@ -51,21 +49,6 @@ const getLinks = (route) => new Promise((resolve, reject) => {
     })
     .catch((error) => reject(error));
 });
-  /*
-  const mdFile = readMd(route);
-  const regex = /\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g;
-  let match = regex.exec(mdFile);
-  while (match !== null) {
-    links.push({
-      href: match[2],
-      text: match[1],
-      file: route,
-    });
-    match = regex.exec(mdFile);
-  }
-  return links;
-  */
-// const readDirectory = (route) => fs.readdirSync(route);
 
 module.exports = {
   message,
@@ -73,11 +56,11 @@ module.exports = {
   validatePath,
   isAbsolute,
   convertToAbsolute,
-  isDirectory,
-  isFile,
+  statDirectory,
   readDirectory,
   mdExt,
   filterMd,
   readMd,
   getLinks,
+  readFile,
 };
