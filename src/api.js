@@ -20,8 +20,6 @@ const mdExt = (route) => path.extname(route) === '.md';
 
 const filterMd = (files) => files.filter((file) => mdExt(file));
 
-const readMd = (route) => fs.readFileSync(route, 'utf-8');
-
 const readFile = (pathFile) => new Promise((resolve, reject) => {
   fs.readFile(pathFile, (error, data) => {
     if (error) {
@@ -60,7 +58,6 @@ module.exports = {
   readDirectory,
   mdExt,
   filterMd,
-  readMd,
   getLinks,
   readFile,
 };

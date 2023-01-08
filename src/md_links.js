@@ -31,9 +31,17 @@ const mdLinks = (route, options) => {
       });
     } else if (absolutePath) {
       // eslint-disable-next-line no-unused-expressions
-      mdExt(absolutePath)
-        ? log(console.log(getLinks(absolutePath)))
-        : log(message('No es un archivo .md', 'red'));
+      if (mdExt(absolutePath)) {
+        getLinks(absolutePath)
+          .then((links) => {
+            if (links.length !== 0) {
+              log(message('Links:', 'green'));
+              log(links);
+            }
+          });
+      } else {
+        log(message('No es un archivo .md', 'red'));
+      }
     }
   } else {
     log(message('La ruta ingresada no existe', 'red'));

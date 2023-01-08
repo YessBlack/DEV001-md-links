@@ -1,22 +1,41 @@
 /* eslint-disable no-undef */
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const {
+  message,
+  formatPath,
   validatePath,
   isAbsolute,
   convertToAbsolute,
   statDirectory,
+  readDirectory,
+  mdExt,
+  filterMd,
   readFile,
+  getLinks,
 } = require('../src/api');
 
 jest.mock('fs');
 jest.mock('path');
+jest.mock('chalk', () => ({
+  keyword: jest.fn(() => jest.fn((text) => text)),
+}));
+
+describe('message', () => {
+  it('Deberia llamar a chalk.keyword', () => {
+    message('Hola', 'red');
+    expect(chalk.keyword).toHaveBeenCalled();
+  });
+});
+
+describe('formatPath', () => {
+  it('Deberia retornar el path con /', () => {
+    expect(formatPath('home\\Documents\\DEV001-md-links\\test\\test.md')).toBe('home/Documents/DEV001-md-links/test/test.md');
+  });
+});
 
 describe('validatePath', () => {
-  it('Deberia ser una funcion', () => {
-    expect(typeof validatePath).toBe('function');
-  });
-
   it('Deberia llamar a fs.existsSync', () => {
     validatePath('./test/test.md');
     expect(fs.existsSync).toHaveBeenCalled();
@@ -29,10 +48,6 @@ describe('validatePath', () => {
 });
 
 describe('isAbsolute', () => {
-  it('Deberia ser una funcion', () => {
-    expect(typeof isAbsolute).toBe('function');
-  });
-
   it('Deberia llamar a path.isAbsolute', () => {
     isAbsolute('./test/test.md');
     expect(path.isAbsolute).toHaveBeenCalled();
@@ -45,10 +60,6 @@ describe('isAbsolute', () => {
 });
 
 describe('convertToAbsolute ', () => {
-  it('Deberia ser una funcion', () => {
-    expect(typeof convertToAbsolute).toBe('function');
-  });
-
   it('Deberia llamar a path.resolve', () => {
     convertToAbsolute('./test/test.md');
     expect(path.resolve).toHaveBeenCalled();
@@ -61,21 +72,39 @@ describe('convertToAbsolute ', () => {
 });
 
 describe('statDirectory', () => {
-  it('Deberia ser una funcion', () => {
-    expect(typeof statDirectory).toBe('function');
-  });
-
   it('Deberia retornar true si es un directorio', () => {
     fs.statSync.mockImplementationOnce(() => ({ isDirectory: () => true }));
     expect(statDirectory('./test/test.md')).toBe(true);
   });
 });
 
-describe('readFile', () => {
-  it('debería er una función', () => {
-    expect(typeof readFile).toBe('function');
+describe('readDirectory', () => {
+  it('Deberia llamar a fs.readdirSync', () => {
+    readDirectory('./test/test.md');
+    expect(fs.readdirSync).toHaveBeenCalled();
   });
 
+  it('Deberia retornar un array de archivos', () => {
+    fs.readdirSync.mockImplementationOnce(() => ['test.md']);
+    expect(readDirectory('./test/test.md')).toEqual(['test.md']);
+  });
+});
+
+describe('mdExt', () => {
+  it('Deberia retornar true si el archivo es .md', () => {
+    path.extname.mockImplementationOnce(() => '.md');
+    expect(mdExt('test.md')).toBe(true);
+  });
+});
+
+describe('filterMd', () => {
+  it('Deberia retornar un array de archivos .md', () => {
+    const array = ['test.md', 'test.txt', 'test.js'];
+    expect(filterMd(array)).toEqual([]);
+  });
+});
+
+describe('readFile', () => {
   it('Debería llamar a fs.readFile', () => {
     readFile();
     expect(fs.readFile).toHaveBeenCalled();

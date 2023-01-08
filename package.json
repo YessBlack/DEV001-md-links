@@ -29,6 +29,9 @@
   ],
   "author": "'Angelica Garcia <anyegar36@gmail.com>",
   "license": "ISC",
+  "bin": {
+    "md-links": "src/index.js"
+  },
   "bugs": {
     "url": "https://github.com/YessBlack/DEV001-md-links/issues"
   },
