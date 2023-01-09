@@ -2,6 +2,7 @@ const { log } = console;
 const { readFile } = require('fs');
 const {
   message,
+  formatPath,
   validatePath,
   isAbsolute,
   convertToAbsolute,
@@ -17,11 +18,17 @@ const mdLinks = (route, options) => {
   if (validatePath(absolutePath)) {
     if (statDirectory(absolutePath)) {
       const filesMd = filterMd(readDirectory(absolutePath));
-      console.log(filesMd);
+      filesMd.forEach((file) => {
+        const pathFile = formatPath(`${absolutePath}/${file}`);
+        console.log(pathFile);
+      });
     } else if (absolutePath) {
       // eslint-disable-next-line no-unused-expressions
       if (mdExt(absolutePath)) {
-        console.log(readFile(absolutePath));
+        console.log(readFile(absolutePath, 'utf8', (err, data) => {
+          if (err) throw err;
+          console.log(data);
+        }));
       } else {
         log(message('No es un archivo .md', 'red'));
       }
