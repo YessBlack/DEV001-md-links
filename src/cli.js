@@ -2,6 +2,7 @@ const { message } = require('./api');
 
 const { log } = console;
 const mdLinks = require('./md_links');
+const help = require('./help');
 const welcome = require('./welcome');
 
 const mdLinksExe = () => {
@@ -17,6 +18,9 @@ const mdLinksExe = () => {
       if (options[2] === '--exit') {
         mdLinks(options[1]);
         process.exit();
+      }
+      if (options[2] === '--help') {
+        help();
       }
       if (!options[2]) {
         mdLinks(options[1]);

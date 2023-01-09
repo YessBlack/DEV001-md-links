@@ -20,6 +20,33 @@ const mdExt = (route) => path.extname(route) === '.md';
 
 const filterMd = (files) => files.filter((file) => mdExt(file));
 
+const readFile = (pathFile) => new Promise((resolve, reject) => {
+  fs.readFile(pathFile, (error, data) => {
+    if (error) {
+      reject(error);
+    }
+    resolve(data);
+  });
+});
+
+const getLinks = (route) => new Promise((resolve, reject) => {
+  const links = [];
+  readFile(route)
+    .then((data) => {
+      const regex = /\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g;
+      let match = regex.exec(data);
+      while (match !== null) {
+        links.push({
+          href: match[2],
+          text: match[1],
+          file: route,
+        });
+        match = regex.exec(data);
+      }
+      resolve(links);
+    })
+    .catch((error) => reject(error));
+});
 
 module.exports = {
   message,
@@ -31,6 +58,6 @@ module.exports = {
   readDirectory,
   mdExt,
   filterMd,
+  getLinks,
   readFile,
 };
-
