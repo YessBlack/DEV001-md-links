@@ -20,15 +20,6 @@ const mdExt = (route) => path.extname(route) === '.md';
 
 const filterMd = (files) => files.filter((file) => mdExt(file));
 
-const readFile = (pathFile) => new Promise((resolve, reject) => {
-  fs.readFile(pathFile, (error, data) => {
-    if (error) {
-      reject(error);
-    }
-    resolve(data);
-  });
-});
-
 
 module.exports = {
   message,
@@ -42,3 +33,4 @@ module.exports = {
   filterMd,
   readFile,
 };
+
