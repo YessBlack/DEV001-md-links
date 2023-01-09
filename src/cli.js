@@ -1,41 +1,31 @@
+const { message } = require('./api');
+
 const { log } = console;
-const {
-  message,
-  formatPath,
-  validatePath,
-  isAbsolute,
-  convertToAbsolute,
-  isDirectory,
-  isFile,
-  readDirectory,
-  mdExt,
-  filterMd,
-  getLinks,
-} = require('./api');
+const mdLinks = require('./md_links');
+const welcome = require('./welcome');
 
-const mdLinks = (route, options) => {
-  const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
-
-  if (validatePath(absolutePath)) {
-    if (isDirectory(absolutePath)) {
-      const filesMd = filterMd(readDirectory(absolutePath));
-      filesMd.forEach((file) => {
-        log(message(`Archivo: ${file}`, 'green'));
-        const pathFile = formatPath(`${absolutePath}/${file}`);
-        log(message('Links:', 'green'));
-        log(getLinks(pathFile));
-      });
-    } else if (isFile(absolutePath)) {
-      // eslint-disable-next-line no-unused-expressions
-      mdExt(absolutePath)
-        ? log(console.log(getLinks(absolutePath)))
-        : log(message('No es un archivo .md', 'red'));
+const mdLinksExe = () => {
+  welcome();
+  process.stdout.write(message('> ', 'cyan'));
+  process.stdin.on('data', (data) => {
+    const route = data.toString().trim();
+    const options = route.split(' ');
+    // eslint-disable-next-line no-unused-expressions
+    if (options[0] === 'md-links' && options.length === 1) {
+      log(message('Por favor incluya la ruta', 'red'));
+    } else if (options[0] === 'md-links' && options[1]) {
+      if (options[2] === '--exit') {
+        mdLinks(options[1]);
+        process.exit();
+      }
+      if (!options[2]) {
+        mdLinks(options[1]);
+      }
+    } else {
+      log(message('Comando no reconocido', 'red'));
     }
-  } else {
-    log(message('La ruta ingresada no existe', 'red'));
-  }
+    process.stdout.write(message('> ', 'cyan'));
+  });
 };
 
-// mdLinks('pruebas/pruebaSinLinks.md');
-
-module.exports = mdLinks;
+module.exports = mdLinksExe;
