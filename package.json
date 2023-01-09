@@ -8,5 +8,40 @@
     "createdAt": "2022-11-16T21:49:06.371Z",
     "version": "5.4.0",
     "commit": "14aeca030be012fc987dcb1c604bbbcb0fdd325e"
+  },
+  "description": "md-links",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "md-links": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YessBlack/DEV001-md-links.git"
+  },
+  "keywords": [
+    "nodejs",
+    "javascript"
+  ],
+  "author": "'Angelica Garcia <anyegar36@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YessBlack/DEV001-md-links/issues"
+  },
+  "homepage": "https://github.com/YessBlack/DEV001-md-links#readme",
+  "devDependencies": {
+    "eslint": "^8.31.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "jest": "^29.3.1",
+    "nodemon": "^2.0.20"
+  },
+  "dependencies": {
+    "ascii-art": "^2.8.5",
+    "chalk": "^4.1.0",
+    "figlet": "^1.5.2"
   }
 }
