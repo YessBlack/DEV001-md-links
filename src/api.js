@@ -29,20 +29,7 @@ const readFile = (pathFile) => new Promise((resolve, reject) => {
   });
 });
 
-const getPathFile = (route) => {
-  const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
-  if (validatePath(absolutePath)) {
-    if (statDirectory(absolutePath)) {
-      const filesMd = filterMd(readDirectory(absolutePath));
-      const arrPathFiles = filesMd.map((file) => formatPath(`${absolutePath}/${file}`));
-      return arrPathFiles;
-    } if (absolutePath) {
-      if (mdExt(absolutePath)) {
-        return [absolutePath];
-      }
-    }
-  }
-};
+// eslint-disable-next-line consistent-return
 
 const getLinks = (route) => new Promise((resolve, reject) => {
   const links = [];
@@ -75,5 +62,5 @@ module.exports = {
   filterMd,
   getLinks,
   readFile,
-  getPathFile,
+
 };

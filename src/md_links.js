@@ -1,26 +1,41 @@
-const { log } = console;
 const {
+  formatPath,
   validatePath,
+  isAbsolute,
+  convertToAbsolute,
+  statDirectory,
+  readDirectory,
+  mdExt,
+  filterMd,
   getLinks,
-  getPathFile,
 } = require('./api');
+
+const getPathFile = (route) => {
+  const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
+  if (validatePath(absolutePath)) {
+    if (statDirectory(absolutePath)) {
+      const filesMd = filterMd(readDirectory(absolutePath));
+      const arrPathFiles = filesMd.map((file) => formatPath(`${absolutePath}/${file}`));
+      return arrPathFiles;
+    } if (absolutePath) {
+      if (mdExt(absolutePath)) {
+        return [absolutePath];
+      }
+    }
+  }
+};
 
 const mdLinks = (route, options) => new Promise((resolve, reject) => {
   if (validatePath(route)) {
-    const pathFile = getPathFile(route);
-    console.log(pathFile);
-    pathFile.forEach((file) => {
-      getLinks(file)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((error) => reject(error));
-    });
-    // const arrLinks = pathFile.map((file) => getLinks(file));
-    // resolve(arrLinks);
+    if (options.validate === false) {
+      const pathFile = getPathFile(route);
+      pathFile.forEach((file) => {
+        resolve(getLinks(file));
+      });
+    }
+  } else {
+    reject(new Error('La ruta no existe'));
   }
 });
-
-// mdLinks('pruebas/pruebaSinLinks.md');
 
 module.exports = mdLinks;

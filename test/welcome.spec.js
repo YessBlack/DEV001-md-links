@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 const welcome = require('../src/welcome');
 
+jest.mock('../src/welcome');
+
 describe('welcome', () => {
   it('is a function', () => {
     expect(typeof welcome).toBe('function');
