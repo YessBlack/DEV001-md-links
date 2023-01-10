@@ -10,43 +10,23 @@ const {
   mdExt,
   filterMd,
   getLinks,
+  getPathFile,
 } = require('./api');
 
-const mdLinks = (route, options) => {
-  const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
-
-  if (validatePath(absolutePath)) {
-    if (statDirectory(absolutePath)) {
-      const filesMd = filterMd(readDirectory(absolutePath));
-      filesMd.forEach((file) => {
-        const pathFile = formatPath(`${absolutePath}/${file}`);
-        getLinks(pathFile)
-          .then((links) => {
-            if (links.length !== 0) {
-              log(message(`Archivo: ${file}`, 'orange'));
-              log(message('Links:', 'green'));
-              log(links);
-            }
-          });
-      });
-    } else if (absolutePath) {
-      // eslint-disable-next-line no-unused-expressions
-      if (mdExt(absolutePath)) {
-        getLinks(absolutePath)
-          .then((links) => {
-            if (links.length !== 0) {
-              log(message('Links:', 'green'));
-              log(links);
-            }
-          });
-      } else {
-        log(message('No es un archivo .md', 'red'));
-      }
-    }
-  } else {
-    log(message('La ruta ingresada no existe', 'red'));
+const mdLinks = (route, options) => new Promise((resolve, reject) => {
+  if (validatePath(route)) {
+    const pathFile = getPathFile(route);
+    pathFile.map((file) => {
+      getLinks(file)
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((error) => reject(error));
+    });
+    // const arrLinks = pathFile.map((file) => getLinks(file));
+    // resolve(arrLinks);
   }
-};
+});
 
 // mdLinks('pruebas/pruebaSinLinks.md');
 
