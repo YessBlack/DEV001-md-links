@@ -7,10 +7,10 @@ const { log } = console;
 const welcome = () => {
   log(
     chalk.keyword('orange')(
-      figlet.textSync('< md_links >', { horizontalLayout: 'full' }),
+      figlet.textSync('< md_links >\n', { horizontalLayout: 'full' }),
     ),
   );
-  log(chalk.bold.blue('.:.:.:. Herramienta para validar links de archivos Markdown .:.:.:. \n'));
+  log(message('\n.:.:.:. Herramienta para validar links de archivos Markdown .:.:.:. \n', 'blue'));
   log(chalk.bgRed('Para comenzar a usar md-links, ten en cuenta las siguientes instrucciones: \n'));
   log(message('1. Ingresa el comando md-links seguido de la ruta del archivo que deseas analizar. \n', 'green'));
   log(message('2. Si deseas validar los links, agrega la opción --validate. \n', 'green'));

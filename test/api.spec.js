@@ -118,4 +118,37 @@ describe('readFile', () => {
     fs.readFile.mockImplementationOnce((path, callback) => callback(null, 'Hola'));
     await expect(readFile('./test/test.md')).resolves.toEqual('Hola');
   });
+
+  it('Debería retornar una promesa rechazada si el path no existe', async () => {
+    fs.readFile.mockImplementationOnce((path, callback) => callback('Error', null));
+    await expect(readFile('./test/test.md')).rejects.toEqual('Error');
+  });
+});
+
+describe('getLinks', () => {
+  it('Deberia llamar a fs.readFile', () => {
+    getLinks();
+    expect(fs.readFile).toHaveBeenCalled();
+  });
+
+  it('Deberia retornar una promesa', () => {
+    expect(getLinks()).toBeInstanceOf(Promise);
+  });
+
+  it('Deberia retornar un array de objetos con los links', () => {
+    const array = [
+      {
+        href: 'https://nodejs.org/es/',
+        text: 'Node.js',
+        file: 'home/Documents/DEV001-md-links/test/test.md',
+      },
+    ];
+    fs.readFile.mockImplementationOnce((path, callback) => callback(null, '[Node.js](https://nodejs.org/es/)'));
+    expect(getLinks('home/Documents/DEV001-md-links/test/test.md')).resolves.toEqual(array);
+  });
+
+  it('Deberia retornar una promesa rechazada', () => {
+    fs.readFile.mockImplementationOnce((path, callback) => callback('Error', null));
+    expect(getLinks('home/Documents/DEV001-md-links/test/test.md')).rejects.toEqual('Error');
+  });
 });
