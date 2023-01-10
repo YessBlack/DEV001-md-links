@@ -1,14 +1,6 @@
 const { log } = console;
 const {
-  message,
-  formatPath,
   validatePath,
-  isAbsolute,
-  convertToAbsolute,
-  statDirectory,
-  readDirectory,
-  mdExt,
-  filterMd,
   getLinks,
   getPathFile,
 } = require('./api');
@@ -16,7 +8,8 @@ const {
 const mdLinks = (route, options) => new Promise((resolve, reject) => {
   if (validatePath(route)) {
     const pathFile = getPathFile(route);
-    pathFile.map((file) => {
+    console.log(pathFile);
+    pathFile.forEach((file) => {
       getLinks(file)
         .then((data) => {
           resolve(data);
