@@ -1,3 +1,3 @@
-const mdLinksExe = require('./md-links');
+const mdLinksExe = require('./cli');
 
 mdLinksExe();

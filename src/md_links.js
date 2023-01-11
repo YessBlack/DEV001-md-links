@@ -1,37 +1,40 @@
 const { log } = console;
-const { readFile } = require('fs');
 const {
   message,
   formatPath,
   validatePath,
   isAbsolute,
   convertToAbsolute,
-  statDirectory,
+  isDirectory,
+  isFile,
   readDirectory,
   mdExt,
   filterMd,
+  getLinks,
 } = require('./api');
 
 const mdLinks = (route, options) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
 
   if (validatePath(absolutePath)) {
-    if (statDirectory(absolutePath)) {
+    if (isDirectory(absolutePath)) {
       const filesMd = filterMd(readDirectory(absolutePath));
       filesMd.forEach((file) => {
         const pathFile = formatPath(`${absolutePath}/${file}`);
-        console.log(pathFile);
+        getLinks(pathFile)
+          .then((links) => {
+            if (links.length !== 0) {
+              log(message(`Archivo: ${file}`, 'orange'));
+              log(message('Links:', 'green'));
+              log(links);
+            }
+          });
       });
-    } else if (absolutePath) {
+    } else if (isFile(absolutePath)) {
       // eslint-disable-next-line no-unused-expressions
-      if (mdExt(absolutePath)) {
-        console.log(readFile(absolutePath, 'utf8', (err, data) => {
-          if (err) throw err;
-          console.log(data);
-        }));
-      } else {
-        log(message('No es un archivo .md', 'red'));
-      }
+      mdExt(absolutePath)
+        ? log(console.log(getLinks(absolutePath)))
+        : log(message('No es un archivo .md', 'red'));
     }
   } else {
     log(message('La ruta ingresada no existe', 'red'));
