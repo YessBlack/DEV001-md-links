@@ -14,6 +14,7 @@ const {
   filterMd,
   readFile,
   getLinks,
+  validateLinks,
 } = require('../src/api');
 
 jest.mock('fs');
@@ -150,5 +151,11 @@ describe('getLinks', () => {
   it('Deberia retornar una promesa rechazada', () => {
     fs.readFile.mockImplementationOnce((path, callback) => callback('Error', null));
     expect(getLinks('home/Documents/DEV001-md-links/test/test.md')).rejects.toEqual('Error');
+  });
+});
+
+describe('validateLinks', () => {
+  it('Deberia ser una funcion', () => {
+    expect(typeof validateLinks).toBe('function');
   });
 });

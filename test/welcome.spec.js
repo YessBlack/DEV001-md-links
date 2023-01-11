@@ -1,14 +1,18 @@
 /* eslint-disable no-undef */
-const welcome = require('../src/welcome');
+const { mdLiksMessage, welcome } = require('../src/welcome');
 
-jest.mock('../src/welcome');
-
-describe('welcome', () => {
-  it('is a function', () => {
-    expect(typeof welcome).toBe('function');
+describe('mdLiksMessage', () => {
+  it('Debería ser una función', () => {
+    expect(typeof mdLiksMessage).toBe('function');
   });
 
-  it('Deberia retornar texto', () => {
-    expect(welcome()).toBe('Welcome to md-links!');
+  it('Debería retornar un string', () => {
+    expect(typeof mdLiksMessage()).toBe('string');
+  });
+});
+
+describe('welcome', () => {
+  it('Debería ser una función', () => {
+    expect(typeof welcome).toBe('function');
   });
 });

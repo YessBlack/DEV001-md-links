@@ -29,8 +29,6 @@ const readFile = (pathFile) => new Promise((resolve, reject) => {
   });
 });
 
-// eslint-disable-next-line consistent-return
-
 const getLinks = (route) => new Promise((resolve, reject) => {
   const links = [];
   readFile(route)
@@ -50,6 +48,21 @@ const getLinks = (route) => new Promise((resolve, reject) => {
     .catch((error) => reject(error));
 });
 
+const validateLinks = (urls) => Promise.all(urls.map((arrayLinks) => fetch(arrayLinks.href)
+  .then((resolve) => {
+    const objResolve = {
+      ...arrayLinks,
+      status: resolve.status,
+      ok: (resolve.status >= 200) && (resolve.status <= 399) ? 'ok' : 'fail',
+    };
+    return objResolve;
+  })
+  .catch(() => ({
+    ...arrayLinks,
+    status: 'archivo roto',
+    ok: 'fail',
+  }))));
+
 module.exports = {
   message,
   formatPath,
@@ -62,5 +75,5 @@ module.exports = {
   filterMd,
   getLinks,
   readFile,
-
+  validateLinks,
 };

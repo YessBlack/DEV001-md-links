@@ -4,12 +4,12 @@ const { message } = require('./api');
 
 const { log } = console;
 
+const mdLiksMessage = () => chalk.keyword('orange')(
+  figlet.textSync('< md_links >\n', { horizontalLayout: 'full' }),
+);
+
 const welcome = () => {
-  log(
-    chalk.keyword('orange')(
-      figlet.textSync('< md_links >\n', { horizontalLayout: 'full' }),
-    ),
-  );
+  log(mdLiksMessage());
   log(message('\n.:.:.:. Herramienta para validar links de archivos Markdown .:.:.:. \n', 'blue'));
   log(chalk.bgRed('Para comenzar a usar md-links, ten en cuenta las siguientes instrucciones: \n'));
   log(message('1. Ingresa el comando md-links seguido de la ruta del archivo que deseas analizar. \n', 'green'));
@@ -21,4 +21,4 @@ const welcome = () => {
   log(chalk.bgRed('¡Listo! Ya puedes comenzar a usar md-links. \n'));
 };
 
-module.exports = welcome;
+module.exports = { mdLiksMessage, welcome };

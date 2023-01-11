@@ -8,8 +8,10 @@ const {
   mdExt,
   filterMd,
   getLinks,
+  validateLinks,
 } = require('./api');
 
+// eslint-disable-next-line consistent-return
 const getPathFile = (route) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
   if (validatePath(absolutePath)) {
@@ -26,12 +28,16 @@ const getPathFile = (route) => {
 };
 
 const mdLinks = (route, options) => new Promise((resolve, reject) => {
+  const pathFile = getPathFile(route);
+  const links = Promise.all(pathFile.map((file) => getLinks(file)));
+
   if (validatePath(route)) {
     if (options.validate === false) {
-      const pathFile = getPathFile(route);
-      pathFile.forEach((file) => {
-        resolve(getLinks(file));
-      });
+      resolve(links);
+    }
+    if (options.validate === true) {
+      const validate = links.then((data) => validateLinks(data.flat()));
+      resolve(validate);
     }
   } else {
     reject(new Error('La ruta no existe'));
