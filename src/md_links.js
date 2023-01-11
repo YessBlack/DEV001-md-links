@@ -1,46 +1,47 @@
-const { log } = console;
 const {
-  message,
   formatPath,
   validatePath,
   isAbsolute,
   convertToAbsolute,
-  isDirectory,
-  isFile,
+  statDirectory,
   readDirectory,
   mdExt,
   filterMd,
   getLinks,
+  validateLinks,
 } = require('./api');
 
-const mdLinks = (route, options) => {
+// eslint-disable-next-line consistent-return
+const getPathFile = (route) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
-
   if (validatePath(absolutePath)) {
-    if (isDirectory(absolutePath)) {
+    if (statDirectory(absolutePath)) {
       const filesMd = filterMd(readDirectory(absolutePath));
-      filesMd.forEach((file) => {
-        const pathFile = formatPath(`${absolutePath}/${file}`);
-        getLinks(pathFile)
-          .then((links) => {
-            if (links.length !== 0) {
-              log(message(`Archivo: ${file}`, 'orange'));
-              log(message('Links:', 'green'));
-              log(links);
-            }
-          });
-      });
-    } else if (isFile(absolutePath)) {
-      // eslint-disable-next-line no-unused-expressions
-      mdExt(absolutePath)
-        ? log(console.log(getLinks(absolutePath)))
-        : log(message('No es un archivo .md', 'red'));
+      const arrPathFiles = filesMd.map((file) => formatPath(`${absolutePath}/${file}`));
+      return arrPathFiles;
+    } if (absolutePath) {
+      if (mdExt(absolutePath)) {
+        return [absolutePath];
+      }
     }
-  } else {
-    log(message('La ruta ingresada no existe', 'red'));
   }
 };
 
-// mdLinks('pruebas/pruebaSinLinks.md');
+const mdLinks = (route, options) => new Promise((resolve, reject) => {
+  const pathFile = getPathFile(route);
+  const links = Promise.all(pathFile.map((file) => getLinks(file)));
+
+  if (validatePath(route)) {
+    if (options.validate === false) {
+      resolve(links);
+    }
+    if (options.validate === true) {
+      const validate = links.then((data) => validateLinks(data.flat()));
+      resolve(validate);
+    }
+  } else {
+    reject(new Error('La ruta no existe'));
+  }
+});
 
 module.exports = mdLinks;
