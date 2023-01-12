@@ -53,7 +53,7 @@ const validateLinks = (urls) => Promise.all(urls.map((arrayLinks) => fetch(array
     const objResolve = {
       ...arrayLinks,
       status: resolve.status,
-      ok: (resolve.status >= 200) && (resolve.status <= 399) ? 'ok' : 'fail',
+      ok: (resolve.ok === true) ? 'ok' : 'fail',
     };
     return objResolve;
   })
