@@ -27,6 +27,9 @@ if (options.length === 1) {
     case '--validate':
       resolveMDLinks(path, { validate: true });
       break;
+    case '--stats':
+      resolveMDLinks(path, { stats: true });
+      break;
     default:
       log(message('Opción no válida', 'red'));
   }
