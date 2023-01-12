@@ -40,6 +40,10 @@ const mdLinks = (route, options) => new Promise((resolve, reject) => {
       const validate = links.then((data) => validateLinks(data.flat()));
       resolve(validate);
     }
+    if (options.stats === true) {
+      const validate = links.then((data) => statsLinks(data.flat()));
+      resolve(validate);
+    }
   } else {
     reject(new Error('La ruta no existe'));
   }
