@@ -9,6 +9,7 @@ const {
   filterMd,
   getLinks,
   validateLinks,
+  statsLinks,
 } = require('./api');
 
 // eslint-disable-next-line consistent-return
