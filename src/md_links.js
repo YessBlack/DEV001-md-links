@@ -10,6 +10,7 @@ const {
   getLinks,
   validateLinks,
   statsLinks,
+  statsLinksValidate,
 } = require('./api');
 
 // eslint-disable-next-line consistent-return
@@ -34,11 +35,19 @@ const mdLinks = (route, options) => new Promise((resolve, reject) => {
 
   if (validatePath(route)) {
     if (options.validate === false) {
-      resolve(links);
+      resolve(links.then((res) => res.flat()));
+      return;
+    }
+    if (options.stats === true && options.validate === true) {
+      const validateStatusLinks = links.then((data) => validateLinks(data.flat()));
+      const validate = validateStatusLinks.then((data) => statsLinksValidate(data.flat()));
+      resolve(validate);
+      return;
     }
     if (options.validate === true) {
       const validate = links.then((data) => validateLinks(data.flat()));
       resolve(validate);
+      return;
     }
     if (options.stats === true) {
       const validate = links.then((data) => statsLinks(data.flat()));

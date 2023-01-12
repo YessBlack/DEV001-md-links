@@ -18,12 +18,15 @@ const resolveMDLinks = (path, options) => {
 welcome();
 
 const path = process.argv[2];
-const options = process.argv.slice(2);
-
-if (options.length === 1) {
+const options = process.argv.slice(3);
+const option = options.join(' ');
+if (options.length === 0) {
   resolveMDLinks(path, { validate: false });
-} else if (options.length === 2) {
-  switch (options[1]) {
+} else if (options.length >= 1) {
+  switch (option) {
+    case '--stats --validate':
+      resolveMDLinks(path, { stats: true, validate: true });
+      break;
     case '--validate':
       resolveMDLinks(path, { validate: true });
       break;

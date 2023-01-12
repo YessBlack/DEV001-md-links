@@ -71,6 +71,14 @@ const statsLinks = (urls) => {
   return objStats;
 };
 
+const statsLinksValidate = (urls) => {
+  const objStats = {
+    ...statsLinks(urls),
+    broken: urls.filter((link) => link.ok === 'fail').length,
+  };
+  return objStats;
+};
+
 module.exports = {
   message,
   formatPath,
@@ -85,4 +93,5 @@ module.exports = {
   readFile,
   validateLinks,
   statsLinks,
+  statsLinksValidate,
 };
