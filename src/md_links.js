@@ -14,17 +14,25 @@ const {
 } = require('./api');
 
 // eslint-disable-next-line consistent-return
-const getPathFile = (route) => {
+const getPathFile = (route, arrOfFiles = []) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
   if (validatePath(absolutePath)) {
+    // Dir
     if (statDirectory(absolutePath)) {
-      const filesMd = filterMd(readDirectory(absolutePath));
-      const arrPathFiles = filesMd.map((file) => formatPath(`${absolutePath}/${file}`));
-      return arrPathFiles;
-    } if (absolutePath) {
-      if (mdExt(absolutePath)) {
-        return [absolutePath];
-      }
+      const files = readDirectory(route);
+      files.forEach((file) => {
+        const stat = statDirectory(`${route}/${file}`);
+        if (stat) {
+          getPathFile(formatPath(`${absolutePath}/${file}`), arrOfFiles);
+        } else {
+          arrOfFiles.push(formatPath(`${absolutePath}/${file}`));
+        }
+      });
+      return arrOfFiles;
+    }
+    // file
+    if (mdExt(absolutePath)) {
+      return [absolutePath];
     }
   }
 };
