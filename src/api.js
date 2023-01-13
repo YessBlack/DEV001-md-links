@@ -64,13 +64,14 @@ const validateLinks = (urls) => Promise.all(urls.map((arrayLinks) => fetch(array
   }))));
 
 const statsLinks = (urls) => {
-  const objStats = {
-    total: urls.length,
-    unique: new Set(urls.map((link) => link.href)).size,
-  };
-  return objStats;
+  const allStats = `\nTotal: ${urls.length}\nUnique:${new Set(urls.map((link) => link.href)).size}\n`;
+  return allStats;
 };
 
+const statsLinksValidate = (urls) => {
+  const allStatsValidate = `${statsLinks(urls)}Broken: ${urls.filter((link) => link.ok === 'fail').length}\n`;
+  return allStatsValidate;
+};
 module.exports = {
   message,
   formatPath,
@@ -85,4 +86,5 @@ module.exports = {
   readFile,
   validateLinks,
   statsLinks,
+  statsLinksValidate,
 };
