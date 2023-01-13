@@ -19,16 +19,16 @@ const getPathFile = (route, arrOfFiles = []) => {
   if (validatePath(absolutePath)) {
     // Dir
     if (statDirectory(absolutePath)) {
-      const files = readDirectory(route);
+      const files = readDirectory(absolutePath);
       files.forEach((file) => {
-        const stat = statDirectory(`${route}/${file}`);
+        const stat = statDirectory(formatPath(`${absolutePath}/${file}`));
         if (stat) {
           getPathFile(formatPath(`${absolutePath}/${file}`), arrOfFiles);
         } else {
           arrOfFiles.push(formatPath(`${absolutePath}/${file}`));
         }
       });
-      return arrOfFiles;
+      return arrOfFiles.filter((file) => mdExt(file));
     }
     // file
     if (mdExt(absolutePath)) {
