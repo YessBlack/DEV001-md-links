@@ -6,7 +6,6 @@ const {
   statDirectory,
   readDirectory,
   mdExt,
-  filterMd,
   getLinks,
   validateLinks,
   statsLinks,
@@ -66,4 +65,4 @@ const mdLinks = (route, options) => new Promise((resolve, reject) => {
   }
 });
 
-module.exports = mdLinks;
+module.exports = { getPathFile, mdLinks };

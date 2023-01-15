@@ -51,7 +51,7 @@ const validateLinks = (urls) => Promise.all(urls.map((arrayLinks) => fetch(array
     const objResolve = {
       ...arrayLinks,
       status: resolve.status,
-      ok: (resolve.ok === true) ? 'ok' : 'fail',
+      ok: resolve.ok ? 'ok' : 'fail',
     };
     return objResolve;
   })
@@ -62,7 +62,7 @@ const validateLinks = (urls) => Promise.all(urls.map((arrayLinks) => fetch(array
   }))));
 
 const statsLinks = (urls) => {
-  const allStats = `\nTotal: ${urls.length}\nUnique:${new Set(urls.map((link) => link.href)).size}\n`;
+  const allStats = `\nTotal: ${urls.length}\nUnique: ${new Set(urls.map((link) => link.href)).size}\n`;
   return allStats;
 };
 
@@ -79,7 +79,6 @@ module.exports = {
   statDirectory,
   readDirectory,
   mdExt,
-  filterMd,
   getLinks,
   readFile,
   validateLinks,
