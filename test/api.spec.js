@@ -11,7 +11,7 @@ const {
   convertToAbsolute,
   statDirectory,
   readDirectory,
-  mdExt,
+  isMdFile,
   readFile,
   getLinks,
   validateLinks,
@@ -24,8 +24,6 @@ jest.mock('path');
 jest.mock('chalk', () => ({
   keyword: jest.fn(() => jest.fn((text) => text)),
 }));
-
-const unmockedFetch = global.fetch;
 
 describe('message', () => {
   it('Deberia llamar a chalk.keyword', () => {
@@ -98,7 +96,7 @@ describe('readDirectory', () => {
 describe('mdExt', () => {
   it('Deberia retornar true si el archivo es .md', () => {
     path.extname.mockImplementationOnce(() => '.md');
-    expect(mdExt('test.md')).toBe(true);
+    expect(isMdFile('test.md')).toBe(true);
   });
 });
 
@@ -112,14 +110,14 @@ describe('readFile', () => {
     expect(readFile()).toBeInstanceOf(Promise);
   });
 
-  it('Debería retornar una promesa resuelta si el path existe', async () => {
+  it('Debería retornar una promesa resuelta si el path existe', () => {
     fs.readFile.mockImplementationOnce((path, callback) => callback(null, 'Hola'));
-    await expect(readFile('./test/test.md')).resolves.toEqual('Hola');
+    expect(readFile('./test/test.md')).resolves.toEqual('Hola');
   });
 
-  it('Debería retornar una promesa rechazada si el path no existe', async () => {
+  it('Debería retornar una promesa rechazada si el path no existe', () => {
     fs.readFile.mockImplementationOnce((path, callback) => callback('Error', null));
-    await expect(readFile('./test/test.md')).rejects.toEqual('Error');
+    expect(readFile('./test/test.md')).rejects.toEqual('Error');
   });
 });
 
@@ -152,28 +150,31 @@ describe('getLinks', () => {
 });
 
 describe('validateLinks', () => {
-  beforeEach(() => {
-    global.fetch = (url) => new Promise((resolve, reject) => {
-      if (url === 'https://nodejs.org/es/') resolve({ status: 200, ok: true });
-      if (url === 'https://nodejs.org/es/404') resolve({ status: 404, ok: false });
-      reject(new Error('Error'));
-    });
-  });
-  it('Deberia retornar una promesa', () => {
-    const arr = ['https://nodejs.org/es/'];
-    expect(validateLinks(arr)).toBeInstanceOf(Promise);
+  beforeAll(() => {
+    const mockFetch = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 200, ok: true })
+      .mockResolvedValueOnce({ status: 400, ok: false })
+      .mockRejectedValueOnce({ status: 'link roto', ok: false });
+    global.fetch = mockFetch;
   });
 
-  it('Deberia devolver un arreglo de promesas con status 200', async () => {
-    const arrAgs = [{ href: 'https://nodejs.org/es/' }];
-    const arrRes = [{ href: 'https://nodejs.org/es/', status: 200, ok: 'ok' }];
-    await validateLinks(arrAgs).then((res) => expect(res).toEqual(arrRes));
+  it('Deberia devolver un arreglo de promesas con status 200', () => {
+    const arrAgs = [{ href: 'dev.co' }];
+    const arrRes = [{ href: 'dev.co', status: 200, ok: 'ok' }];
+    return validateLinks(arrAgs).then((res) => expect(res).toEqual(arrRes));
   });
 
-  it('Deberia retornar un arreglo de promesas con status 400', async () => {
-    const arrAgs = [{ href: 'https://nodejs.org/es/404' }];
-    const arrRes = [{ href: 'https://nodejs.org/es/404', status: 404, ok: 'fail' }];
-    await expect(validateLinks(arrAgs)).resolves.toEqual(arrRes);
+  it('Deberia retornar un arreglo de promesas con status 400', () => {
+    const arrAgs = [{ href: 'dev.co' }];
+    const arrRes = [{ href: 'dev.co', status: 400, ok: 'fail' }];
+    return validateLinks(arrAgs).then((res) => expect(res).toEqual(arrRes));
+  });
+
+  it('Deberia retornar un arreglo de promesas con status link roto', () => {
+    const arrAgs = [{ href: 'lab.co' }];
+    const arrRes = [{ href: 'lab.co', status: 'archivo roto', ok: 'fail' }];
+    return validateLinks(arrAgs).catch((res) => expect(res).toEqual(arrRes));
   });
 });
 
@@ -205,6 +206,6 @@ describe('statsValidateLinks', () => {
   });
 });
 
-afterAll(() => {
-  global.fetch = unmockedFetch;
-});
+// afterAll(() => {
+//   global.fetch = unmockedFetch;
+// });
