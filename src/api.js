@@ -16,7 +16,7 @@ const statDirectory = (route) => fs.statSync(route).isDirectory();
 
 const readDirectory = (route) => fs.readdirSync(route);
 
-const mdExt = (route) => path.extname(route) === '.md';
+const isMdFile = (route) => path.extname(route) === '.md';
 
 const readFile = (pathFile) => new Promise((resolve, reject) => {
   fs.readFile(pathFile, (error, data) => {
@@ -61,10 +61,7 @@ const validateLinks = (urls) => Promise.all(urls.map((arrayLinks) => fetch(array
     ok: 'fail',
   }))));
 
-const statsLinks = (urls) => {
-  const allStats = `\nTotal: ${urls.length}\nUnique: ${new Set(urls.map((link) => link.href)).size}\n`;
-  return allStats;
-};
+const statsLinks = (urls) => `\nTotal: ${urls.length}\nUnique: ${new Set(urls.map((link) => link.href)).size}\n`;
 
 const statsLinksValidate = (urls) => {
   const allStatsValidate = `${statsLinks(urls)}Broken: ${urls.filter((link) => link.ok === 'fail').length}\n`;
@@ -78,7 +75,7 @@ module.exports = {
   convertToAbsolute,
   statDirectory,
   readDirectory,
-  mdExt,
+  isMdFile,
   getLinks,
   readFile,
   validateLinks,

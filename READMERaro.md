@@ -666,4 +666,3 @@ promesas los utilizarán.
 
 * [ ] Un board en github projects con issues para la implementación de la librería
 * [ ] Puede instalarse via `npm install --global <github-user>/md-links`
-

@@ -5,7 +5,7 @@ const {
   convertToAbsolute,
   statDirectory,
   readDirectory,
-  mdExt,
+  isMdFile,
   getLinks,
   validateLinks,
   statsLinks,
@@ -13,8 +13,9 @@ const {
 } = require('./api');
 
 // eslint-disable-next-line consistent-return
-const getPathFile = (route, arrOfFiles = []) => {
+const getPathFile = (route) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
+  const arrOfFiles = [];
   if (validatePath(absolutePath)) {
     // Dir
     if (statDirectory(absolutePath)) {
@@ -22,25 +23,26 @@ const getPathFile = (route, arrOfFiles = []) => {
       files.forEach((file) => {
         const stat = statDirectory(formatPath(`${absolutePath}/${file}`));
         if (stat) {
-          getPathFile(formatPath(`${absolutePath}/${file}`), arrOfFiles);
+          getPathFile(formatPath(`${absolutePath}/${file}`)).forEach((fileSub) => arrOfFiles.push(fileSub));
         } else {
           arrOfFiles.push(formatPath(`${absolutePath}/${file}`));
         }
       });
-      return arrOfFiles.filter((file) => mdExt(file));
+      return arrOfFiles.filter((file) => isMdFile(file));
     }
     // file
-    if (mdExt(absolutePath)) {
+    if (isMdFile(absolutePath)) {
       return [absolutePath];
     }
   }
 };
 
 const mdLinks = (route, options) => new Promise((resolve, reject) => {
-  const pathFile = getPathFile(route);
-  const links = Promise.all(pathFile.map((file) => getLinks(file)));
+  const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
+  if (validatePath(absolutePath)) {
+    const pathFile = getPathFile(route);
+    const links = Promise.all(pathFile.map((file) => getLinks(file)));
 
-  if (validatePath(route)) {
     if (options.validate === false) {
       resolve(links.then((res) => res.flat()));
       return;
@@ -61,7 +63,8 @@ const mdLinks = (route, options) => new Promise((resolve, reject) => {
       resolve(validate);
     }
   } else {
-    reject(new Error('La ruta no existe'));
+    // eslint-disable-next-line prefer-promise-reject-errors
+    reject('La ruta no existe');
   }
 });
 

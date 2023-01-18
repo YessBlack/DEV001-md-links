@@ -2,7 +2,7 @@
 const { message } = require('./api');
 
 const { log } = console;
-const mdLinks = require('./md_links');
+const { mdLinks } = require('./md_links');
 const { welcome } = require('./welcome');
 
 const resolveMDLinks = (path, options) => {
