@@ -6,7 +6,6 @@ const {
   statDirectory,
   readDirectory,
   mdExt,
-  filterMd,
   getLinks,
   validateLinks,
   statsLinks,
@@ -14,17 +13,25 @@ const {
 } = require('./api');
 
 // eslint-disable-next-line consistent-return
-const getPathFile = (route) => {
+const getPathFile = (route, arrOfFiles = []) => {
   const absolutePath = isAbsolute(route) ? route : convertToAbsolute(route);
   if (validatePath(absolutePath)) {
+    // Dir
     if (statDirectory(absolutePath)) {
-      const filesMd = filterMd(readDirectory(absolutePath));
-      const arrPathFiles = filesMd.map((file) => formatPath(`${absolutePath}/${file}`));
-      return arrPathFiles;
-    } if (absolutePath) {
-      if (mdExt(absolutePath)) {
-        return [absolutePath];
-      }
+      const files = readDirectory(absolutePath);
+      files.forEach((file) => {
+        const stat = statDirectory(formatPath(`${absolutePath}/${file}`));
+        if (stat) {
+          getPathFile(formatPath(`${absolutePath}/${file}`), arrOfFiles);
+        } else {
+          arrOfFiles.push(formatPath(`${absolutePath}/${file}`));
+        }
+      });
+      return arrOfFiles.filter((file) => mdExt(file));
+    }
+    // file
+    if (mdExt(absolutePath)) {
+      return [absolutePath];
     }
   }
 };
@@ -58,4 +65,4 @@ const mdLinks = (route, options) => new Promise((resolve, reject) => {
   }
 });
 
-module.exports = mdLinks;
+module.exports = { getPathFile, mdLinks };

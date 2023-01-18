@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+
 const {
   message,
   formatPath,
@@ -11,10 +12,11 @@ const {
   statDirectory,
   readDirectory,
   mdExt,
-  filterMd,
   readFile,
   getLinks,
   validateLinks,
+  statsLinks,
+  statsLinksValidate,
 } = require('../src/api');
 
 jest.mock('fs');
@@ -22,6 +24,8 @@ jest.mock('path');
 jest.mock('chalk', () => ({
   keyword: jest.fn(() => jest.fn((text) => text)),
 }));
+
+const unmockedFetch = global.fetch;
 
 describe('message', () => {
   it('Deberia llamar a chalk.keyword', () => {
@@ -98,13 +102,6 @@ describe('mdExt', () => {
   });
 });
 
-describe('filterMd', () => {
-  it('Deberia retornar un array de archivos .md', () => {
-    const array = ['test.md', 'test.txt', 'test.js'];
-    expect(filterMd(array)).toEqual([]);
-  });
-});
-
 describe('readFile', () => {
   it('Debería llamar a fs.readFile', () => {
     readFile();
@@ -155,7 +152,59 @@ describe('getLinks', () => {
 });
 
 describe('validateLinks', () => {
-  it('Deberia ser una funcion', () => {
-    expect(typeof validateLinks).toBe('function');
+  beforeEach(() => {
+    global.fetch = (url) => new Promise((resolve, reject) => {
+      if (url === 'https://nodejs.org/es/') resolve({ status: 200, ok: true });
+      if (url === 'https://nodejs.org/es/404') resolve({ status: 404, ok: false });
+      reject(new Error('Error'));
+    });
   });
+  it('Deberia retornar una promesa', () => {
+    const arr = ['https://nodejs.org/es/'];
+    expect(validateLinks(arr)).toBeInstanceOf(Promise);
+  });
+
+  it('Deberia devolver un arreglo de promesas con status 200', async () => {
+    const arrAgs = [{ href: 'https://nodejs.org/es/' }];
+    const arrRes = [{ href: 'https://nodejs.org/es/', status: 200, ok: 'ok' }];
+    await validateLinks(arrAgs).then((res) => expect(res).toEqual(arrRes));
+  });
+
+  it('Deberia retornar un arreglo de promesas con status 400', async () => {
+    const arrAgs = [{ href: 'https://nodejs.org/es/404' }];
+    const arrRes = [{ href: 'https://nodejs.org/es/404', status: 404, ok: 'fail' }];
+    await expect(validateLinks(arrAgs)).resolves.toEqual(arrRes);
+  });
+});
+
+describe('statsLinks', () => {
+  it('Deberia retornar un string con las estadisticas', () => {
+    const arr = [
+      {
+        file: 'home/Documents/DEV001-md-links/test/test.md',
+        href: 'https://nodejs.org/es/',
+        text: 'Node.js',
+      },
+    ];
+    expect(statsLinks(arr)).toEqual('\nTotal: 1\nUnique: 1\n');
+  });
+});
+
+describe('statsValidateLinks', () => {
+  it('Deberia retornar un string con las estadisticas', () => {
+    const arr = [
+      {
+        href: 'https://nodejs.org/es/',
+        text: 'Node.js',
+        file: 'home/Documents/DEV001-md-links/test/test.md',
+        status: 200,
+        statusText: 'ok',
+      },
+    ];
+    expect(statsLinksValidate(arr)).toEqual('\nTotal: 1\nUnique: 1\nBroken: 0\n');
+  });
+});
+
+afterAll(() => {
+  global.fetch = unmockedFetch;
 });
