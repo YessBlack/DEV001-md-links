@@ -47,7 +47,7 @@ const mdLinks = (route, options) => new Promise((resolve, reject) => {
       resolve(links.then((res) => res.flat()));
       return;
     }
-    if (options.stats === true && options.validate === true) {
+    if ((options.stats && options.validate) || (options.validate && options.stats)) {
       const validateStatusLinks = links.then((data) => validateLinks(data.flat()));
       const validate = validateStatusLinks.then((data) => statsLinksValidate(data.flat()));
       resolve(validate);
