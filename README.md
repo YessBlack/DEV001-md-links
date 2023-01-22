@@ -9,7 +9,9 @@
 
 * [2. Como instalar MdLinks](#2-ComoinstalarMdLinks)
 
-* [3. Entregables](#6-entregables)
+* [3. Diagrama de flujo](#3-Diagramadeflujo)
+
+* [4. Planning](#4-Planning)
 
 ***
 
