@@ -35,6 +35,10 @@ O también puedes hacerlo desde Github:
 
     npm install yessblack/DEV001-md-links
 
+Una vez instalado puedes usarlo con
+
+    npm-link
+    
 ### Uso
 
 ![image](https://user-images.githubusercontent.com/70681219/213899344-ea1da419-3182-428f-a621-8c59252efa84.png)
@@ -92,14 +96,6 @@ Se muestra un arreglo con la información basica, `[{ href text path }]`
 
 ![image](https://user-images.githubusercontent.com/70681219/213899513-d7721e69-36b9-47eb-844f-7fc23710cd79.png)
 
-
-## 3. Diagrama de flujo
-
-![diagrama de flujo](https://user-images.githubusercontent.com/70681219/210260603-3cbcf925-95bf-4914-a319-d791d138f0a3.png)
-
-## 4. Planning 
-
-![image](https://user-images.githubusercontent.com/70681219/213899614-9ec78b6f-eac8-4dc1-a50d-c1ba0b5b2731.png)
 
 
 
